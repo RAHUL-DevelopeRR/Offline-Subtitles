@@ -1,0 +1,26 @@
+# Offline Subtitle Generator - Dependencies
+# Install: pip install -r requirements.txt
+
+# ASR - Faster Whisper with CTranslate2 backend
+faster-whisper>=1.0.0
+
+# VAD - Silero VAD (uses torch)
+torch>=2.0.0
+torchaudio>=2.0.0
+
+# Sound Event Detection - TensorFlow Lite (via tensorflow-cpu)
+# Note: tflite-runtime lacks wheels for some platforms; tensorflow-cpu works everywhere
+tensorflow-cpu>=2.14.0
+
+# Audio processing
+numpy>=1.24.0
+soundfile>=0.12.0
+
+# CPU monitoring & throttling
+psutil>=5.9.0
+
+# Configuration
+pyyaml>=6.0
+
+# Testing
+pytest>=7.0.0

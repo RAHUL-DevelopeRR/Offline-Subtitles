@@ -1,0 +1,66 @@
+# ============================================================
+# Offline Subtitle Generator — Configuration
+# ============================================================
+
+# Audio extraction settings
+audio:
+  sample_rate: 16000        # Hz (Whisper & YAMNet native)
+  channels: 1               # Mono
+  format: "pcm_s16le"       # 16-bit PCM
+
+# Voice Activity Detection (Silero VAD)
+vad:
+  threshold: 0.35           # Speech probability threshold (lower = catches softer speech)
+  min_speech_sec: 0.15      # Minimum speech segment duration (catches short utterances)
+  min_silence_sec: 0.3      # Minimum silence to split segments
+  padding_sec: 0.3          # Padding before/after speech segments (more context for Whisper)
+  energy_threshold: 0.001   # RMS energy threshold for non-speech
+
+# Automatic Speech Recognition (Faster-Whisper)
+asr:
+  model: "small"            # "tiny" | "base" | "small"
+  compute_type: "int8"      # "int8" | "float16" | "float32"
+  beam_size: 3              # Beam search width (1–10, lower = faster)
+  threads: 0                # CTranslate2 CPU threads (0 = auto-detect cores)
+  language: null             # null = auto-detect, or "en", "hi", etc.
+  max_segment_sec: 30       # Max segment length before splitting
+  best_of: 1                # Number of sampling candidates (1 = fastest)
+  patience: 1.0             # Beam search patience (early stopping)
+  no_speech_threshold: 0.6  # Suppress hallucinated text when no speech detected
+  log_prob_threshold: -1.0  # Filter low-probability segments
+  min_confidence: -1.0      # Drop transcriptions below this avg_logprob
+  word_timestamps: true     # Enable word-level timestamps for precision
+  temperature: "0.0,0.2,0.4,0.6,0.8,1.0"  # Temperature fallback for difficult audio
+  initial_prompt: null       # Optional domain context to guide transcription
+
+# Sound Event Detection (YAMNet TFLite)
+sed:
+  model_path: "models/yamnet.tflite"
+  class_map_path: "models/yamnet_class_map.csv"
+  min_confidence: 0.4       # Minimum score to report an event
+  frame_duration: 0.96      # YAMNet native frame size (seconds)
+  hop_duration: 0.48        # Frame hop (50% overlap)
+  run_on_speech: false      # Also detect sounds during speech?
+  max_gap_merge: 0.5        # Merge same-class events within this gap
+
+# Timeline merger & SRT output
+merge:
+  min_duration: 0.8         # Minimum subtitle display time (seconds)
+  max_duration: 7.0         # Maximum subtitle display time (seconds)
+  merge_gap: 0.5            # Gap threshold to merge adjacent entries
+
+# Threading & CPU management
+threading:
+  mode: "parallel"          # "parallel" | "sequential" (parallel is ~30% faster)
+  max_cpu_percent: 70       # CPU usage cap (voluntary throttle)
+  throttle_check_interval: 2.0  # Seconds between CPU checks
+
+# Caching
+cache:
+  enabled: true
+  directory: "cache"
+
+# Logging
+logging:
+  level: "INFO"             # "DEBUG" | "INFO" | "WARNING" | "ERROR"
+  file: null                # null = stdout only, or path to log file
